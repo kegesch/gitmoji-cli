@@ -1,0 +1,36 @@
+name: gitmoji
+version: "1.0"
+about: Gitmoji Cli
+author: Jonas Geschke <mail@yonny.de>
+
+# All Args must be defined in the 'args:' list where the name of the arg, is the
+# key to a Hash object
+args:
+  - init:
+      short: i
+      long: init
+      help: Initiliaze gitmoji as a commit hook
+  - remove:
+      short: r
+      long: remove
+      help: Remove a previously initialized commit hook
+  - config:
+      short: g
+      long: config
+      help: Setup gitmoji-cli preferences
+  - commit:
+      short: c
+      long: commit
+      help: Interactively commit using the prompts
+  - list:
+      short: l
+      long: list
+      help: List all the available gitmojis
+  - search:
+      short: s
+      long: search
+      help: Search gitmojis
+  - update:
+      short: u
+      long: update
+      help: Sync emoji list with the repo
