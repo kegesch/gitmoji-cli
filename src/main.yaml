@@ -10,27 +10,34 @@ args:
       short: i
       long: init
       help: Initiliaze gitmoji as a commit hook
+      required: false
   - remove:
       short: r
       long: remove
       help: Remove a previously initialized commit hook
+      required: false
   - config:
       short: g
       long: config
       help: Setup gitmoji-cli preferences
+      required: false
   - commit:
       short: c
       long: commit
       help: Interactively commit using the prompts
+      required: false
   - list:
       short: l
       long: list
       help: List all the available gitmojis
+      required: false
   - search:
       short: s
       long: search
       help: Search gitmojis
+      required: false
   - update:
       short: u
       long: update
       help: Sync emoji list with the repo
+      required: false
