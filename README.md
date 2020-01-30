@@ -6,7 +6,7 @@
 ## About
 
 This project provides an easy solution for using [**gitmoji**](https://github.com/carloscuesta/gitmoji) from your command line. Gitmoji-cli solves the hassle of searching through the gitmoji list. Includes a bunch of options you can play with! :tada:
-And a shameless copy of the [original](https://github.com/carloscuesta/gitmoji-cli) but written in Rust.
+And it is a shameless copy of the [original](https://github.com/carloscuesta/gitmoji-cli) but written in Rust.
 ## Install
 
 ```bash
@@ -77,8 +77,6 @@ Pretty print all the available gitmojis.
 $ gitmoji -l
 ```
 
-![gitmoji list](https://user-images.githubusercontent.com/7629661/41189877-d22b145a-6bd4-11e8-97f8-a8e36bcab062.png)
-
 ### Update
 
 Update the gitmojis list, by default the first time you run gitmoji, the cli creates a cache to allow using this tool without internet connection.
@@ -90,5 +88,3 @@ $ gitmoji -u
 ### Config
 
 Run `gitmoji -g` to setup some gitmoji-cli preferences, such as the auto `git add .` feature.
-
-![gitmoji config](https://user-images.githubusercontent.com/7629661/41189876-d21167ee-6bd4-11e8-9008-4c987502f307.png)
