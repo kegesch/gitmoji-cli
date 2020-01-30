@@ -36,6 +36,8 @@ args:
       long: search
       help: Search gitmojis
       required: false
+      takes_value: true
+      value_name: query
   - update:
       short: u
       long: update

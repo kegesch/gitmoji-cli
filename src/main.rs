@@ -68,6 +68,26 @@ fn main() {
         }
     }
 
+    let query = matches.value_of("search");
+    if matches.is_present("search") && query.is_some() {
+        if search_emojis(query.unwrap()).is_err() {
+            eprintln!("Could not search gitmojis.")
+        }
+    }
+
+}
+
+fn search_emojis(query: &str) -> Result<(), GitmojiError> {
+    let emojis = get_emojis()?;
+    let mut filtered = vec![];
+
+    for emo in emojis {
+        if emo["name"].to_string().contains(query) || emo["description"].to_string().contains(query) {
+            filtered.push(emo.clone())
+        }
+    }
+    print_emojis(filtered);
+    Ok(())
 }
 
 fn list_emojis(refetch: bool) -> Result<(), GitmojiError> {
@@ -96,16 +116,18 @@ fn create_emoji_cache(emojis: JsonValue) -> Result<(), GitmojiError> {
     Ok(())
 }
 
-fn get_emojis() -> Result<JsonValue, GitmojiError> {
+fn get_emojis() -> Result<Vec<JsonValue>, GitmojiError> {
     let mut string = String::new();
     File::with_options().read(true).open(GITMOJI_CACHE.clone())?.read_to_string(&mut string)?;
-    Ok(json::parse(string.as_str())?)
+    let json = json::parse(string.as_str())?;
+    if let JsonValue::Array(obj) = json["gitmojis"].clone() {
+        return Ok(obj);
+    }
+    Err(GitmojiError::Other("Could not find gitmoji list in json.".to_owned()))
 }
 
-fn print_emojis(emojis: JsonValue) {
-    if let JsonValue::Array(obj) = emojis["gitmojis"].clone() {
-        for gitmoji in obj.iter() {
-            println!("{} - {} - {}", gitmoji["emoji"], gitmoji["code"].to_string().blue(), gitmoji["description"]);
-        }
+fn print_emojis(emojis: Vec<JsonValue>) {
+    for gitmoji in emojis.iter() {
+        println!("{} - {} - {}", gitmoji["emoji"], gitmoji["code"].to_string().blue(), gitmoji["description"]);
     }
 }
