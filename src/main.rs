@@ -12,6 +12,11 @@ use std::io::{Write, Read};
 use colored::Colorize;
 use json::JsonValue;
 use once_cell::sync::Lazy;
+use crate::prompts::{Emoji, ask_for_emoji, ask_for_scope, ask_for_title, ask_for_message};
+use std::process::Command;
+use std::str;
+
+pub mod prompts;
 
 static GITMOJI_URL : &'static str =
     "https://raw.githubusercontent.com/carloscuesta/gitmoji/master/src/data/gitmojis.json";
@@ -75,6 +80,41 @@ fn main() {
         }
     }
 
+    if matches.is_present("commit") {
+        if commit().is_err() {
+            eprintln!("Could not commit.");
+        }
+    }
+
+}
+
+fn commit() -> Result<(), GitmojiError> {
+    let emojis: Vec<Emoji> = get_emojis()?.iter().map(|val| Emoji::from(val)).collect();
+    let emoji = ask_for_emoji(&emojis)?;
+    let scope = ask_for_scope()?;
+    let title = ask_for_title()?;
+    let message = ask_for_message()?;
+
+    let mut commit_title = emoji.clone().code + " ";
+    commit_title += scope.as_str();
+    commit_title += ": ";
+    commit_title += title.as_str();
+
+    let git_output = Command::new("git")
+        .arg("commit")
+        .arg("-m")
+        .arg(commit_title)
+        .arg("-m")
+        .arg(message)
+        .output()?;
+
+    if git_output.status.success() {
+        println!("{}", String::from_utf8_lossy(git_output.stdout.as_ref()));
+    } else {
+        eprintln!("{}", String::from_utf8_lossy(git_output.stderr.as_ref()));
+    }
+
+    Ok(())
 }
 
 fn search_emojis(query: &str) -> Result<(), GitmojiError> {

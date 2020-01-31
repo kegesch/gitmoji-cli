@@ -16,11 +16,15 @@ args:
       long: remove
       help: Remove a previously initialized commit hook
       required: false
+      conflicts_with:
+        - init
   - config:
       short: g
       long: config
       help: Setup gitmoji-cli preferences
       required: false
+      conflicts_with:
+        - init
   - commit:
       short: c
       long: commit
@@ -31,6 +35,8 @@ args:
       long: list
       help: List all the available gitmojis
       required: false
+      conflicts_with:
+        - update
   - search:
       short: s
       long: search
@@ -43,3 +49,5 @@ args:
       long: update
       help: Sync emoji list with the repo
       required: false
+      conflicts_with:
+        - list
