@@ -182,7 +182,8 @@ fn search_emojis(query: &str) -> Result<(), GitmojiError> {
     let mut filtered = vec![];
 
     for emo in emojis {
-        if emo["name"].to_string().contains(query) || emo["description"].to_string().contains(query) {
+        if emo["name"].to_string().to_ascii_lowercase().contains(&query.to_ascii_lowercase()) ||
+            emo["description"].to_string().to_ascii_lowercase().contains(&query.to_ascii_lowercase()) {
             filtered.push(emo.clone())
         }
     }
