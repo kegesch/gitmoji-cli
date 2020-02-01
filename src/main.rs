@@ -3,6 +3,11 @@
 #[macro_use]
 extern crate clap;
 
+extern crate confy;
+
+#[macro_use]
+extern crate serde_derive;
+
 use clap::{load_yaml, App, AppSettings::ColoredHelp};
 use spinners::{Spinners, Spinner};
 use std::path::PathBuf;
@@ -15,20 +20,28 @@ use once_cell::sync::Lazy;
 use crate::prompts::{Emoji, ask_for_emoji, ask_for_scope, ask_for_title, ask_for_message};
 use std::process::Command;
 use std::str;
+use crate::configuration::Configuration;
 
 pub mod prompts;
+pub mod configuration;
 
 static GITMOJI_URL : &'static str =
     "https://raw.githubusercontent.com/carloscuesta/gitmoji/master/src/data/gitmojis.json";
+
+static GITMOJI_FOLDER: Lazy<PathBuf> = Lazy::new(|| {
+    let folder_name = ".gitmoji";
+    let folder = home_dir().expect("should have home_dir").join(folder_name);
+    folder
+});
+
 static GITMOJI_CACHE: Lazy<PathBuf> = Lazy::new(|| {
-    let cache_folder = ".gitmoji";
     let cache_file = "gitmojis.json";
-    let cache_path = home_dir().expect("should have home_dir").join(cache_folder).join(cache_file);
+    let cache_path = GITMOJI_FOLDER.join(cache_file);
     cache_path
 });
 
 #[derive(Debug)]
-enum GitmojiError {
+pub enum GitmojiError {
     ReqwestError(reqwest::Error),
     JsonError(json::JsonError),
     IOError(std::io::Error),
@@ -86,6 +99,19 @@ fn main() {
         }
     }
 
+    if matches.is_present("config") {
+        if config().is_err() {
+            eprintln!("Could not configure.");
+        }
+    }
+
+}
+
+fn config() -> Result<(), GitmojiError> {
+    let mut configuration = Configuration::load()?;
+    configuration.prompt()?;
+    configuration.store()?;
+    Ok(())
 }
 
 fn commit() -> Result<(), GitmojiError> {
