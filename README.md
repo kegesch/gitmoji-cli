@@ -11,7 +11,7 @@ And it is a shameless copy of the [original](https://github.com/carloscuesta/git
 
 ```bash
 $ git clone ...
-$ cargo install -p .
+$ cargo install --path .
 ```
 
 ## Usage
