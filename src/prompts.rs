@@ -8,7 +8,7 @@ use crate::configuration::EmojiFormat;
 pub struct Emoji {
     pub code: String,
     description: String,
-    emoji: String,
+    pub emoji: String,
     name: String
 }
 

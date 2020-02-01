@@ -20,7 +20,7 @@ use once_cell::sync::Lazy;
 use crate::prompts::{Emoji, ask_for_emoji, ask_for_scope, ask_for_title, ask_for_message};
 use std::process::Command;
 use std::str;
-use crate::configuration::Configuration;
+use crate::configuration::{Configuration, EmojiFormat};
 
 pub mod prompts;
 pub mod configuration;
@@ -117,29 +117,63 @@ fn config() -> Result<(), GitmojiError> {
 fn commit() -> Result<(), GitmojiError> {
     let emojis: Vec<Emoji> = get_emojis()?.iter().map(|val| Emoji::from(val)).collect();
     let emoji = ask_for_emoji(&emojis)?;
-    let scope = ask_for_scope()?;
+    let mut scope = String::new();
+    if Configuration::is_scope_prompt()? {
+        scope = ask_for_scope()?;
+    }
     let title = ask_for_title()?;
     let message = ask_for_message()?;
 
-    let mut commit_title = emoji.clone().code + " ";
-    commit_title += scope.as_str();
-    commit_title += ": ";
+    let mut commit_title = String::new();
+    if Configuration::emoji_format()? == EmojiFormat::CODE {
+        commit_title += emoji.clone().code.as_str();
+    } else {
+        commit_title += emoji.clone().emoji.as_str();
+    }
+    commit_title += " ";
+    if Configuration::is_scope_prompt()? {
+        commit_title += scope.as_str();
+        commit_title += ": ";
+    }
     commit_title += title.as_str();
 
-    let git_output = Command::new("git")
-        .arg("commit")
-        .arg("-m")
-        .arg(commit_title)
-        .arg("-m")
-        .arg(message)
-        .output()?;
-
-    if git_output.status.success() {
-        println!("{}", String::from_utf8_lossy(git_output.stdout.as_ref()));
-    } else {
-        eprintln!("{}", String::from_utf8_lossy(git_output.stderr.as_ref()));
+    if Configuration::is_auto_add()? {
+        Command::new("git")
+            .arg("add")
+            .arg(".")
+            .output()?;
     }
 
+    if Configuration::is_signed_commit()? {
+        let git_output = Command::new("git")
+            .arg("commit")
+            .arg("-S")
+            .arg("-m")
+            .arg(commit_title)
+            .arg("-m")
+            .arg(message)
+            .output()?;
+
+        if git_output.status.success() {
+            println!("{}", String::from_utf8_lossy(git_output.stdout.as_ref()));
+        } else {
+            eprintln!("{}", String::from_utf8_lossy(git_output.stderr.as_ref()));
+        }
+    } else {
+        let git_output = Command::new("git")
+            .arg("commit")
+            .arg("-m")
+            .arg(commit_title)
+            .arg("-m")
+            .arg(message)
+            .output()?;
+
+        if git_output.status.success() {
+            println!("{}", String::from_utf8_lossy(git_output.stdout.as_ref()));
+        } else {
+            eprintln!("{}", String::from_utf8_lossy(git_output.stderr.as_ref()));
+        }
+    }
     Ok(())
 }
 

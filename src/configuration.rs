@@ -1,9 +1,12 @@
-use crate::{GITMOJI_FOLDER, GitmojiError};
-use crate::prompts::{config_for_auto_add, config_for_emoji_format, config_for_scope_prompt, config_for_signed_commit};
+use crate::GitmojiError;
+use crate::prompts::{
+    config_for_auto_add,
+    config_for_emoji_format,
+    config_for_scope_prompt,
+    config_for_signed_commit
+};
 
-extern crate confy;
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum EmojiFormat {
     CODE,
     EMOJI
@@ -39,5 +42,25 @@ impl Configuration {
     pub fn store(&self) -> Result<(), GitmojiError> {
         confy::store("gitmoji", self)?;
         Ok(())
+    }
+
+    pub fn is_auto_add() -> Result<bool, GitmojiError> {
+        let conf = Self::load()?;
+        Ok(conf.auto_add)
+    }
+
+    pub fn emoji_format() -> Result<EmojiFormat, GitmojiError> {
+        let conf = Self::load()?;
+        Ok(conf.emoji_format)
+    }
+
+    pub fn is_scope_prompt() -> Result<bool, GitmojiError> {
+        let conf = Self::load()?;
+        Ok(conf.scope_prompt)
+    }
+
+    pub fn is_signed_commit() -> Result<bool, GitmojiError> {
+        let conf = Self::load()?;
+        Ok(conf.signed_commit)
     }
 }
