@@ -41,7 +41,6 @@ use crate::prompts::{Emoji, ask_for_emoji, ask_for_scope, ask_for_title, ask_for
 use std::process::Command;
 use std::str;
 use crate::configuration::{Configuration, EmojiFormat};
-use confy::ConfyError;
 
 pub mod prompts;
 pub mod configuration;
@@ -70,7 +69,6 @@ pub enum GitmojiError {
     ReqwestError(reqwest::Error),
     JsonError(json::JsonError),
     IOError(std::io::Error),
-    ConfyError(confy::ConfyError),
     Other(String)
 }
 
@@ -89,12 +87,6 @@ impl From<json::JsonError> for GitmojiError {
 impl From<std::io::Error> for GitmojiError {
     fn from(err: std::io::Error) -> Self {
         GitmojiError::IOError(err)
-    }
-}
-
-impl From<confy::ConfyError> for GitmojiError {
-    fn from(err: ConfyError) -> Self {
-        GitmojiError::ConfyError(err)
     }
 }
 
