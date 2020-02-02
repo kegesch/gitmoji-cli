@@ -73,6 +73,16 @@ pub fn ask_for_message() -> Result<String, io::Error> {
     input.interact()
 }
 
+pub fn ask_for_issue() -> Result<String, io::Error> {
+    let theme = ColoredTheme::default();
+    let mut input = Input::with_theme(&theme);
+    input.with_prompt("Enter the referring issue:");
+
+    // TODO validate
+
+    input.interact()
+}
+
 pub fn config_for_auto_add(default: bool) -> Result<bool, io::Error> {
     let theme = ColoredTheme::default();
     let mut confirm = Confirmation::with_theme(&theme);
@@ -95,6 +105,15 @@ pub fn config_for_scope_prompt(default: bool) -> Result<bool, io::Error> {
     let theme = ColoredTheme::default();
     let mut confirm = Confirmation::with_theme(&theme);
     confirm.with_text("Enable scope prompt:");
+    confirm.default(default);
+
+    confirm.interact()
+}
+
+pub fn config_for_issue_prompt(default: bool) -> Result<bool, io::Error> {
+    let theme = ColoredTheme::default();
+    let mut confirm = Confirmation::with_theme(&theme);
+    confirm.with_text("Enable referring issue prompt:");
     confirm.default(default);
 
     confirm.interact()

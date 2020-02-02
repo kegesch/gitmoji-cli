@@ -1,10 +1,5 @@
 use crate::GitmojiError;
-use crate::prompts::{
-    config_for_auto_add,
-    config_for_emoji_format,
-    config_for_scope_prompt,
-    config_for_signed_commit
-};
+use crate::prompts::{config_for_auto_add, config_for_emoji_format, config_for_scope_prompt, config_for_signed_commit, config_for_issue_prompt};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum EmojiFormat {
@@ -23,7 +18,8 @@ pub struct Configuration {
     auto_add: bool,
     emoji_format: EmojiFormat,
     scope_prompt: bool,
-    signed_commit: bool
+    signed_commit: bool,
+    reffering_issue: bool,
 }
 
 impl Configuration {
@@ -32,6 +28,7 @@ impl Configuration {
         self.emoji_format = config_for_emoji_format(self.emoji_format.clone())?;
         self.scope_prompt = config_for_scope_prompt(self.scope_prompt)?;
         self.signed_commit = config_for_signed_commit(self.signed_commit)?;
+        self.reffering_issue = config_for_issue_prompt(self.reffering_issue)?;
         Ok(())
     }
     pub fn load() -> Result<Configuration, GitmojiError> {
@@ -62,5 +59,10 @@ impl Configuration {
     pub fn is_signed_commit() -> Result<bool, GitmojiError> {
         let conf = Self::load()?;
         Ok(conf.signed_commit)
+    }
+
+    pub fn is_issue_prompt() -> Result<bool, GitmojiError> {
+        let conf = Self::load()?;
+        Ok(conf.reffering_issue)
     }
 }
