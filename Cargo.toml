@@ -1,9 +1,13 @@
 [package]
 name = "gitmoji"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["Jonas Geschke <github@yonny.de>"]
 edition = "2018"
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license = "MIT"
+description = "CLI for gitmoji"
+homepage = "https://github.com/kegesch/gitmoji-cli"
+repository = "https://github.com/kegesch/gitmoji-cli"
+documentation = "https://docs.rs/gitmoji-cli"
 
 [dependencies]
 clap = { version = "^2.33.0", features = ["yaml", "wrap_help"] }

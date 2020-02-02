@@ -1,6 +1,6 @@
 name: gitmoji
 version: "1.0"
-about: Gitmoji Cli
+about: Interactive gitmoji command line interface
 author: Jonas Geschke <mail@yonny.de>
 
 # All Args must be defined in the 'args:' list where the name of the arg, is the

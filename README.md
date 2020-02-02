@@ -10,8 +10,7 @@ And it is a shameless copy of the [original](https://github.com/carloscuesta/git
 ## Install
 
 ```bash
-$ git clone ...
-$ cargo install --path .
+$ cargo install gitmoji-cli
 ```
 
 ## Usage

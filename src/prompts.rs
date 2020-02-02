@@ -51,8 +51,13 @@ pub fn ask_for_scope() -> Result<String, io::Error> {
     let theme = ColoredTheme::default();
     let mut input = Input::with_theme(&theme);
     input.with_prompt("Enter the scope of current changes:");
-
-    // TODO validate
+    input.validate_with(|v: &str| {
+        if v.contains("`") {
+            Err("Enter a valid scope")
+        } else {
+            Ok(())
+        }
+    });
 
     input.interact()
 }
@@ -62,8 +67,13 @@ pub fn ask_for_title() -> Result<String, io::Error> {
     let theme = ColoredTheme::default();
     let mut input = Input::with_theme(&theme);
     input.with_prompt("Enter the commit title:");
-
-    // TODO validate
+    input.validate_with(|v: &str| {
+        if v.contains("`") || v.is_empty() {
+            Err("Enter a valid title")
+        } else {
+            Ok(())
+        }
+    });
 
     input.interact()
 }
@@ -73,8 +83,13 @@ pub fn ask_for_message() -> Result<String, io::Error> {
     let theme = ColoredTheme::default();
     let mut input = Input::with_theme(&theme);
     input.with_prompt("Enter the commit message:");
-
-    // TODO validate
+    input.validate_with(|v: &str| {
+        if v.contains("`") {
+            Err("Enter a valid message")
+        } else {
+            Ok(())
+        }
+    });
 
     input.interact()
 }
@@ -84,8 +99,13 @@ pub fn ask_for_issue() -> Result<String, io::Error> {
     let theme = ColoredTheme::default();
     let mut input = Input::with_theme(&theme);
     input.with_prompt("Enter the referring issue:");
-
-    // TODO validate
+    input.validate_with(|v: &str| {
+        if v.contains("`") || v.is_empty() {
+            Err("Enter a valid issue")
+        } else {
+            Ok(())
+        }
+    });
 
     input.interact()
 }
@@ -141,7 +161,8 @@ impl ToString for EmojiFormatSelection {
         format!("{}", self.display)
     }
 }
-// Configure prompt for emoji format
+
+/// Configure prompt for emoji format
 pub fn config_for_emoji_format(default: EmojiFormat) -> Result<EmojiFormat, io::Error> {
     let theme = ColoredTheme::default();
     let mut select = Select::with_theme(&theme);
