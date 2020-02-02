@@ -6,36 +6,35 @@ author: Jonas Geschke <mail@yonny.de>
 # All Args must be defined in the 'args:' list where the name of the arg, is the
 # key to a Hash object
 args:
-  - init:
-      short: i
-      long: init
-      help: Initiliaze gitmoji as a commit hook
-      required: false
-  - remove:
-      short: r
-      long: remove
-      help: Remove a previously initialized commit hook
-      required: false
-      conflicts_with:
-        - init
   - config:
       short: g
       long: config
       help: Setup gitmoji-cli preferences
       required: false
       conflicts_with:
-        - init
+        - commit
+        - list
+        - search
+        - update
   - commit:
       short: c
       long: commit
       help: Interactively commit using the prompts
       required: false
+      conflicts_with:
+        - config
+        - list
+        - search
+        - update
   - list:
       short: l
       long: list
       help: List all the available gitmojis
       required: false
       conflicts_with:
+        - config
+        - commit
+        - search
         - update
   - search:
       short: s
@@ -44,10 +43,18 @@ args:
       required: false
       takes_value: true
       value_name: query
+      conflicts_with:
+        - config
+        - commit
+        - list
+        - update
   - update:
       short: u
       long: update
       help: Sync emoji list with the repo
       required: false
       conflicts_with:
+        - config
+        - commit
         - list
+        - search
