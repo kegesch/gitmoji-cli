@@ -1,9 +1,11 @@
+//! Collection of all used prompts
 use dialoguer::{Select, Input, Confirmation};
 use enquirer::ColoredTheme;
 use json::JsonValue;
 use std::io;
 use crate::configuration::EmojiFormat;
 
+/// Struct for emoji data
 #[derive(Clone, Debug)]
 pub struct Emoji {
     pub code: String,
@@ -29,6 +31,7 @@ impl From<&JsonValue> for Emoji {
     }
 }
 
+/// Asks what emoji should be used for a commit
 pub fn ask_for_emoji(emojis: &Vec<Emoji>) -> Result<&Emoji, io::Error> {
     let theme = ColoredTheme::default();
     let mut select = Select::with_theme(&theme);
@@ -43,6 +46,7 @@ pub fn ask_for_emoji(emojis: &Vec<Emoji>) -> Result<&Emoji, io::Error> {
     Ok(emojis.get(res).expect("Should be in list"))
 }
 
+/// Asks for scope of commit
 pub fn ask_for_scope() -> Result<String, io::Error> {
     let theme = ColoredTheme::default();
     let mut input = Input::with_theme(&theme);
@@ -53,6 +57,7 @@ pub fn ask_for_scope() -> Result<String, io::Error> {
     input.interact()
 }
 
+/// Asks for title of commit
 pub fn ask_for_title() -> Result<String, io::Error> {
     let theme = ColoredTheme::default();
     let mut input = Input::with_theme(&theme);
@@ -63,6 +68,7 @@ pub fn ask_for_title() -> Result<String, io::Error> {
     input.interact()
 }
 
+/// Asks for commit message
 pub fn ask_for_message() -> Result<String, io::Error> {
     let theme = ColoredTheme::default();
     let mut input = Input::with_theme(&theme);
@@ -73,6 +79,7 @@ pub fn ask_for_message() -> Result<String, io::Error> {
     input.interact()
 }
 
+/// Asks for referred issue
 pub fn ask_for_issue() -> Result<String, io::Error> {
     let theme = ColoredTheme::default();
     let mut input = Input::with_theme(&theme);
@@ -83,6 +90,7 @@ pub fn ask_for_issue() -> Result<String, io::Error> {
     input.interact()
 }
 
+/// Configure prompt for automatic commit
 pub fn config_for_auto_add(default: bool) -> Result<bool, io::Error> {
     let theme = ColoredTheme::default();
     let mut confirm = Confirmation::with_theme(&theme);
@@ -92,6 +100,7 @@ pub fn config_for_auto_add(default: bool) -> Result<bool, io::Error> {
     confirm.interact()
 }
 
+/// Configure prompt for signed commits
 pub fn config_for_signed_commit(default: bool) -> Result<bool, io::Error> {
     let theme = ColoredTheme::default();
     let mut confirm = Confirmation::with_theme(&theme);
@@ -101,6 +110,7 @@ pub fn config_for_signed_commit(default: bool) -> Result<bool, io::Error> {
     confirm.interact()
 }
 
+/// Configure prompt for the scope prompts
 pub fn config_for_scope_prompt(default: bool) -> Result<bool, io::Error> {
     let theme = ColoredTheme::default();
     let mut confirm = Confirmation::with_theme(&theme);
@@ -110,6 +120,7 @@ pub fn config_for_scope_prompt(default: bool) -> Result<bool, io::Error> {
     confirm.interact()
 }
 
+/// Configure prompt for the issue prompt
 pub fn config_for_issue_prompt(default: bool) -> Result<bool, io::Error> {
     let theme = ColoredTheme::default();
     let mut confirm = Confirmation::with_theme(&theme);
@@ -119,6 +130,7 @@ pub fn config_for_issue_prompt(default: bool) -> Result<bool, io::Error> {
     confirm.interact()
 }
 
+/// Temporary data holder for the emoji selection prompt
 struct EmojiFormatSelection {
     emoji_format: EmojiFormat,
     display: String,
@@ -129,7 +141,7 @@ impl ToString for EmojiFormatSelection {
         format!("{}", self.display)
     }
 }
-
+// Configure prompt for emoji format
 pub fn config_for_emoji_format(default: EmojiFormat) -> Result<EmojiFormat, io::Error> {
     let theme = ColoredTheme::default();
     let mut select = Select::with_theme(&theme);
