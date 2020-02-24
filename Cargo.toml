@@ -22,3 +22,6 @@ dialoguer = "0.5.0"
 confy = "0.3.1"
 serde_derive = "1.0.104"
 serde = "1.0.104"
+
+[patch.crates-io]
+dialoguer = { git = "https://github.com/kegesch/dialoguer", branch = "autocomplete", version = "0.5.0" }

@@ -1,5 +1,5 @@
 //! Collection of all used prompts
-use dialoguer::{Select, Input, Confirmation};
+use dialoguer::{Select, Input, Confirmation, Autocomplete};
 use enquirer::ColoredTheme;
 use json::JsonValue;
 use std::io;
@@ -34,13 +34,10 @@ impl From<&JsonValue> for Emoji {
 /// Asks what emoji should be used for a commit
 pub fn ask_for_emoji(emojis: &Vec<Emoji>) -> Result<&Emoji, io::Error> {
     let theme = ColoredTheme::default();
-    let mut select = Select::with_theme(&theme);
+    let mut select = Autocomplete::with_theme(&theme);
     select.with_prompt("Choose a gitmoji:");
     select.items(emojis);
     select.paged(true);
-    select.default(0);
-
-    // TODO autocomplete
 
     let res = select.interact()?;
     Ok(emojis.get(res).expect("Should be in list"))
