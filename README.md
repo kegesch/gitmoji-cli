@@ -1,4 +1,5 @@
 [![gitmoji badge](https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square)](https://github.com/carloscuesta/gitmoji)
+![crates.io](https://img.shields.io/crates/v/gitmoji.svg)
 
 # gitmoji-cli
 > A [gitmoji](https://github.com/carloscuesta/gitmoji) interactive client for using gitmojis on commit messages.

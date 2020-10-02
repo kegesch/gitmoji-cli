@@ -45,7 +45,7 @@ pub fn ask_for_emoji(emojis: &[Emoji]) -> Result<&Emoji, io::Error> {
     select.paged(true);
 
     let res = select.interact()?;
-    let emoji = emojis.iter().find(|emoji| emoji.name == res);
+    let emoji = emojis.iter().find(|emoji| emoji.to_string() == res);
     Ok(emoji.expect("Should be in list"))
 }
 
