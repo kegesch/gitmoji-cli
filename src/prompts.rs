@@ -1,9 +1,9 @@
 //! Collection of all used prompts
-use dialoguer::{Select, Input, Confirmation, Autocomplete};
-use enquirer::ColoredTheme;
+use dialoguer::{Select, Input, Confirm, FuzzySelect};
 use json::JsonValue;
 use std::io;
 use crate::configuration::EmojiFormat;
+use dialoguer::theme::{ColorfulTheme, Theme};
 
 /// Struct for emoji data
 #[derive(Clone, Debug)]
@@ -31,41 +31,48 @@ impl From<&JsonValue> for Emoji {
     }
 }
 
+
+fn get_theme() -> Box<dyn Theme> {
+    Box::from(ColorfulTheme::default())
+}
+
 /// Asks what emoji should be used for a commit
-pub fn ask_for_emoji(emojis: &Vec<Emoji>) -> Result<&Emoji, io::Error> {
-    let theme = ColoredTheme::default();
-    let mut select = Autocomplete::with_theme(&theme);
+pub fn ask_for_emoji(emojis: &[Emoji]) -> Result<&Emoji, io::Error> {
+    let theme = get_theme();
+    let mut select = FuzzySelect::with_theme(theme.as_ref());
     select.with_prompt("Choose a gitmoji:");
     select.items(emojis);
     select.paged(true);
 
     let res = select.interact()?;
-    Ok(emojis.get(res).expect("Should be in list"))
+    let emoji = emojis.iter().find(|emoji| emoji.name == res);
+    Ok(emoji.expect("Should be in list"))
 }
 
 /// Asks for scope of commit
 pub fn ask_for_scope() -> Result<String, io::Error> {
-    let theme = ColoredTheme::default();
-    let mut input = Input::with_theme(&theme);
-    input.with_prompt("Enter the scope of current changes:");
-    input.validate_with(|v: &str| {
-        if v.contains("`") {
-            Err("Enter a valid scope")
-        } else {
-            Ok(())
-        }
-    });
+    let theme = get_theme();
+    let scope: String = Input::with_theme(theme.as_ref())
+        .with_prompt("Enter the scope of current changes:")
+        .validate_with(|v: &String| {
+            if v.contains('`') {
+                Err("Enter a valid scope")
+            } else {
+                Ok(())
+            }
+        })
+        .interact()?;
 
-    input.interact()
+    Ok(scope)
 }
 
 /// Asks for title of commit
 pub fn ask_for_title() -> Result<String, io::Error> {
-    let theme = ColoredTheme::default();
-    let mut input = Input::with_theme(&theme);
+    let theme = get_theme();
+    let mut input = Input::with_theme(theme.as_ref());
     input.with_prompt("Enter the commit title:");
-    input.validate_with(|v: &str| {
-        if v.contains("`") || v.is_empty() {
+    input.validate_with(|v: &String| {
+        if v.contains('`') || v.is_empty() {
             Err("Enter a valid title")
         } else {
             Ok(())
@@ -77,11 +84,11 @@ pub fn ask_for_title() -> Result<String, io::Error> {
 
 /// Asks for commit message
 pub fn ask_for_message() -> Result<String, io::Error> {
-    let theme = ColoredTheme::default();
-    let mut input = Input::with_theme(&theme);
+    let theme = get_theme();
+    let mut input = Input::with_theme(theme.as_ref());
     input.with_prompt("Enter the commit message:");
-    input.validate_with(|v: &str| {
-        if v.contains("`") {
+    input.validate_with(|v: &String| {
+        if v.contains('`') {
             Err("Enter a valid message")
         } else {
             Ok(())
@@ -93,11 +100,11 @@ pub fn ask_for_message() -> Result<String, io::Error> {
 
 /// Asks for referred issue
 pub fn ask_for_issue() -> Result<String, io::Error> {
-    let theme = ColoredTheme::default();
-    let mut input = Input::with_theme(&theme);
+    let theme = get_theme();
+    let mut input = Input::with_theme(theme.as_ref());
     input.with_prompt("Enter the referring issue:");
-    input.validate_with(|v: &str| {
-        if v.contains("`") || v.is_empty() {
+    input.validate_with(|v: &String| {
+        if v.contains('`') || v.is_empty() {
             Err("Enter a valid issue")
         } else {
             Ok(())
@@ -109,9 +116,9 @@ pub fn ask_for_issue() -> Result<String, io::Error> {
 
 /// Configure prompt for automatic commit
 pub fn config_for_auto_add(default: bool) -> Result<bool, io::Error> {
-    let theme = ColoredTheme::default();
-    let mut confirm = Confirmation::with_theme(&theme);
-    confirm.with_text("Enable automatic \"git add .\":");
+    let theme = get_theme();
+    let mut confirm = Confirm::with_theme(theme.as_ref());
+    confirm.with_prompt("Enable automatic \"git add .\":");
     confirm.default(default);
 
     confirm.interact()
@@ -119,9 +126,9 @@ pub fn config_for_auto_add(default: bool) -> Result<bool, io::Error> {
 
 /// Configure prompt for signed commits
 pub fn config_for_signed_commit(default: bool) -> Result<bool, io::Error> {
-    let theme = ColoredTheme::default();
-    let mut confirm = Confirmation::with_theme(&theme);
-    confirm.with_text("Enable signed commits:");
+    let theme = get_theme();
+    let mut confirm = Confirm::with_theme(theme.as_ref());
+    confirm.with_prompt("Enable signed commits:");
     confirm.default(default);
 
     confirm.interact()
@@ -129,9 +136,9 @@ pub fn config_for_signed_commit(default: bool) -> Result<bool, io::Error> {
 
 /// Configure prompt for the scope prompts
 pub fn config_for_scope_prompt(default: bool) -> Result<bool, io::Error> {
-    let theme = ColoredTheme::default();
-    let mut confirm = Confirmation::with_theme(&theme);
-    confirm.with_text("Enable scope prompt:");
+    let theme = get_theme();
+    let mut confirm = Confirm::with_theme(theme.as_ref());
+    confirm.with_prompt("Enable scope prompt:");
     confirm.default(default);
 
     confirm.interact()
@@ -139,9 +146,9 @@ pub fn config_for_scope_prompt(default: bool) -> Result<bool, io::Error> {
 
 /// Configure prompt for the issue prompt
 pub fn config_for_issue_prompt(default: bool) -> Result<bool, io::Error> {
-    let theme = ColoredTheme::default();
-    let mut confirm = Confirmation::with_theme(&theme);
-    confirm.with_text("Enable referring issue prompt:");
+    let theme = get_theme();
+    let mut confirm = Confirm::with_theme(theme.as_ref());
+    confirm.with_prompt("Enable referring issue prompt:");
     confirm.default(default);
 
     confirm.interact()
@@ -155,14 +162,14 @@ struct EmojiFormatSelection {
 
 impl ToString for EmojiFormatSelection {
     fn to_string(&self) -> String {
-        format!("{}", self.display)
+        self.display.to_string()
     }
 }
 
 /// Configure prompt for emoji format
 pub fn config_for_emoji_format(default: EmojiFormat) -> Result<EmojiFormat, io::Error> {
-    let theme = ColoredTheme::default();
-    let mut select = Select::with_theme(&theme);
+    let theme = get_theme();
+    let mut select = Select::with_theme(theme.as_ref());
     select.with_prompt("Select how emojis should be used in commits:");
     let code = EmojiFormatSelection {emoji_format: EmojiFormat::CODE, display: ":smile:".to_owned()};
     let emoji = EmojiFormatSelection { emoji_format: EmojiFormat::EMOJI, display: "😄".to_owned()};
