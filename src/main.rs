@@ -18,8 +18,6 @@
 //! You can configure optional prompts or defaults by executing ```gitmoji -g```.
 //! ## Commit
 //! To start the interactive commit interface type ```gitmoji -c```.
-#![feature(with_options)]
-
 #[macro_use]
 extern crate clap;
 
@@ -32,7 +30,7 @@ use clap::{load_yaml, App, AppSettings::ColoredHelp};
 use spinners::{Spinners, Spinner};
 use std::path::PathBuf;
 use dirs::home_dir;
-use std::fs::{create_dir, File};
+use std::fs::{create_dir, OpenOptions};
 use std::io::{Write, Read};
 use colored::Colorize;
 use json::JsonValue;
@@ -250,14 +248,21 @@ fn create_emoji_cache(emojis: JsonValue) -> Result<(), GitmojiError> {
     if !GITMOJI_CACHE.exists() {
         create_dir(GITMOJI_CACHE.parent().expect("should have parent!"))?;
     }
-    File::with_options().create(true).write(true).open(GITMOJI_CACHE.clone())?.write_all(emojis.dump().as_bytes())?;
+    OpenOptions::new()
+        .create(true)
+        .write(true)
+        .open(GITMOJI_CACHE.clone())?
+        .write_all(emojis.dump().as_bytes())?;
     Ok(())
 }
 
 /// Retrieves the emoji list from the cache
 fn get_emojis() -> Result<Vec<JsonValue>, GitmojiError> {
     let mut string = String::new();
-    File::with_options().read(true).open(GITMOJI_CACHE.clone())?.read_to_string(&mut string)?;
+    OpenOptions::new()
+        .read(true)
+        .open(GITMOJI_CACHE.clone())?
+        .read_to_string(&mut string)?;
     let json = json::parse(string.as_str())?;
     if let JsonValue::Array(obj) = json["gitmojis"].clone() {
         return Ok(obj);
