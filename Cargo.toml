@@ -1,6 +1,6 @@
 [package]
 name = "gitmoji"
-version = "1.1.0"
+version = "1.1.1"
 authors = ["Jonas Geschke <github@yonny.de>"]
 edition = "2018"
 license = "MIT"
